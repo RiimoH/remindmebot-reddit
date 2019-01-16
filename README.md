@@ -1,9 +1,5 @@
-What is the point of RemindMeBot?
+What is the point of SolvedBot?
 
-RemindMeBot was made as a way to remind the user about a comment or thread for later use.
-For example, someone on AskReddit posts a list of cool movies to watch. Although you don't have time to watch it now, you make a comment to remember to view a movie from the list later.
-However, you forget about the comment you made because you always find the cool things before sleeping and you have a short attention span to view your previously made comments.
-Think of RemindMe! as an improved and automatic "saved" for later
+Many redditors are searching for specific things on reddit. Many requests are unanswerd or take time to be answerd. Instead of requesting a RemindMe-message which has a preset timer, this bot will notify everyone when a solution is found. If you want to help with the search there is also the option to get notifications for partial solutions. 
 
-
-For more info: http://www.reddit.com/r/RemindMeBot/comments/24duzp/remindmebot_info/
+This Bot is entirely based on the original RemindMeBot which you can find here: http://www.reddit.com/r/RemindMeBot/comments/24duzp/remindmebot_info/
