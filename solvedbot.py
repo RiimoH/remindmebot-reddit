@@ -78,7 +78,7 @@ Your notification was registered! We will notify you when the keyword "Found!" i
 
 If you want to be notified too, please use the link below!
 
-[NotifyMe!](http://www.reddit.com/message/compose/?to=solvednotification&subject=Reminder&message=[http://www.reddit.com/{comment.submission}])
+[NotifyMe!](https://www.reddit.com/message/compose?to=solvednotification&subject=Reminder&message=I%20want%20to%20be%20notified%2C%20when%20this%20thread%20is%20solved!%0A%0A{comment.submission}%0A%0ADo%20not%20manipulate%20this%20message!)
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"""
         comment.reply(answer)
