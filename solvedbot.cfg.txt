@@ -1,0 +1,15 @@
+[Reddit]
+username = 
+password = 
+client_id = 
+client_secret = 
+redirect_uri = 
+
+[SQL]
+user = 
+passwd = 
+
+[Settings]
+keyword_searching = 
+keyword_found = 
+subreddit = 
