@@ -54,6 +54,7 @@ class Connect:
         self.connection.commit()
         return True
 
+
 class Handler:
     '''
     Handler Class, concerned about finding, replying, and saving Comments, containing the Keyword.
@@ -75,6 +76,26 @@ Success! You will be notified when the following thread is solved!
         reddit.redditor(user).message(subject='SolvedBot Notification', message=body)
         return True
 
+    def sendFailure(self, message, user):
+    # Notifies all Notifees that a Solution has been found.
+
+        body = f"""::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+Hello {user}
+
+It looks like you want to contact the bot! 
+
+If you wanted to be notified, this opperation failed. Make sure to not manipulate the string.
+
+Otherwise, we'll get to you as soon as possible. If you want to contact the author of the Bot try the link below.
+
+[Link](http://www.reddit.com/u/RiimoH)
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"""
+
+        message.reply(body)
+        return True
+
 
 # Main function, logged with loguru.
 @logger.catch
@@ -83,27 +104,54 @@ def main(reddit, cgf_settings):
     handler = Handler()
     database = Connect()
 
-    # Fetching variables
-    inbox = reddit.inbox.unread()
-
     # Main Loop
     try:
         while True:
+            # Fetching Inbox
+            inbox = reddit.inbox.unread()
+
             for message in inbox:
-                if message.subject == 'NotifyMe!'
+                author = str(message.author)
+                subject = message.subject.lower()
+
+                if 'notifyme' in subject or 'reminder' in subject:
+                    logger.info('Keyword found in '+ str(message))
+                    message.mark_read()
+
                     body = str(message.body)
                     try:
-                        parent_id = re.search('\n\n(.+?)\n\n', body).group(1)
+                        parent_id = re.findall(r'Key\s([a-z0-9A-Z]*)', body)[0]
+                        logger.info(parent_id)
                     except AttributeError:
+                        logger.info(f'No Key found in {body}')
+                        handler.sendFailure(message, author)
                         continue
-                    
+                        
                     comment_id = str(message)
-                    author = str(message.author)
+                    
+                    database.add(parent_id, comment_id, author)
+                    handler.sendMessage(parent_id, author)
+                elif 'nm':
+                    logger.info('Keyword found in '+ str(message))
+                    message.mark_read()
 
-                    database.add(parent_id,comment_id,author)
-                    handler.sendMessage(parent_id, user)
+                    body = str(message.body)
+                    try:
+                        parent_id = re.findall(r'/comments/([a-z0-9A-Z]*)/', body)[0]
+                        logger.info(parent_id)
+                    except AttributeError:
+                        logger.info(f'No Key found in {body}')
+                        handler.sendFailure(message, author)
+                        continue
+                        
+                    comment_id = str(message)
+                    
+                    database.add(parent_id, comment_id, author)
+                    handler.sendMessage(parent_id, author)
                 else:
-                    # maybe inform redditor of error or something...
+                    logger.info(f'No Keyword found in {message.subject}')
+                    handler.sendFailure(message, author)
+                    continue
     except KeyboardInterrupt:
         logger.info('Bot terminated. User input.')
 

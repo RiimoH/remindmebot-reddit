@@ -4,6 +4,7 @@ import praw
 import configparser
 import sqlite3
 import datetime
+from time import sleep
 from loguru import logger
 
 '''
@@ -70,7 +71,7 @@ class Handler:
     Handler Class, concerned about finding, replying, and saving Comments, containing the Keyword.
     '''
 
-    def reply(self, comment):
+    def reply(self, comment, parent_id):
         # Replies to the comment input.
         answer = f"""::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -78,7 +79,7 @@ Your notification was registered! We will notify you when the keyword "Found!" i
 
 If you want to be notified too, please use the link below!
 
-[NotifyMe!](https://www.reddit.com/message/compose?to=solvednotification&subject=Reminder&message=I%20want%20to%20be%20notified%2C%20when%20this%20thread%20is%20solved!%0A%0A{comment.submission}%0A%0ADo%20not%20manipulate%20this%20message!)
+[NotifyMe!](https://www.reddit.com/message/compose?to=solvednotification&subject=NotifyMe!&message=I want to be notified too.%0A%0AKey%3A {parent_id} %2C do not modify this line.)
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"""
         comment.reply(answer)
@@ -127,11 +128,31 @@ def main(reddit, cgf_settings):
                     parent_id = str(comment.submission)
                     comment_id = str(comment)
                     author = str(comment.author)
-
+                    
                     if keyword_searching in text:
+
+                        logger.debug(f'text: {text[:20]}, parent: {parent_id}, comment: {comment_id}, author: {author}')
                         database.add(parent_id, comment_id, author)
-                        handler.reply(comment)
+                        
+                        try:
+                            handler.reply(comment, parent_id)
+                        except praw.exceptions.APIException:
+                            logger.critical('API Restriction hit, trying again later')
+                            error = True
+                            while error == True:
+                                try:
+                                    logger.critical('API Restriction hit, trying again later')
+                                    sleep(180)
+                                    handler.reply(comment, parent_id)
+                                except praw.exceptions.APIException:
+                                    continue
+                                except KeyboardInterrupt:
+                                    break
+                                error == False
+                                logger.info('Error stopped!')
+                            
                     elif keyword_found in text:
+                        logger.debug(f'text: {text[:20]}, parent: {parent_id}, comment: {comment_id}, author: {author}')
                         users = database.fetch(parent_id)
                         handler.sendMessage(parent_id, users)
                         database.delete(parent_id)
