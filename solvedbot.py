@@ -63,6 +63,7 @@ class Connect:
     def delete(self, parent_id):
         # removes all entries from the database, containing the parent_id.
         self.cursor.execute('DELETE FROM data WHERE parent_id = ?', (parent_id,))
+        self.connection.commit()
         return True
 
 
@@ -77,9 +78,23 @@ class Handler:
 
 Your notification was registered! We will notify you when the keyword "Found!" is mentioned.
 
-If you want to be notified too, please use the link below!
+If you want to be notified too, and you're on desktop: please use the link below!
 
-[NotifyMe!](https://www.reddit.com/message/compose?to=solvednotification&subject=NotifyMe!&message=I want to be notified too.%0A%0AKey%3A {parent_id} %2C do not modify this line.)
+If you want to be notified but you're on the mobile app: please follow the instructions further down!
+
+[NotifyMe!](https://www.reddit.com/message/compose?to=solvednotification&subject=NotifyMe!&message=I want to be notified too.%0A%0AKey%3A {parent_id}%0A%0ADo not modify this message.)
+
+Mobile App:
+
+Step 1: Tap the share button and copy the link to the clipboard!
+
+Step 2: Tap the link above, a new message form will open.
+
+Step 3: Enter the subject 'nm' or 'Nm'.
+
+Step 4: Paste the share link into the message.
+
+Step 5: Send and profit!
 
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::"""
         comment.reply(answer)
